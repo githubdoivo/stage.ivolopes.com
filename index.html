@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stage · Ivo Lopes</title>
+<meta name="description" content="Stage: dance and acting by Ivo Lopes, in a painted paper toy theatre.">
+<meta property="og:title" content="Stage · Ivo Lopes">
+<meta property="og:description" content="Dance and acting, in a painted paper toy theatre. Raise the curtain.">
+<meta property="og:url" content="https://stage.ivolopes.com">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://stage.ivolopes.com/og-image.jpg?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://stage.ivolopes.com">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2a0c0d">
+<meta name="color-scheme" content="only light">
+<meta name="darkreader-lock">
+<link rel="preload" as="image" href="img/front.webp" media="(min-aspect-ratio: 1/1)">
+<link rel="preload" as="image" href="img/front-phone.webp" media="(max-aspect-ratio: 1/1)">
+<link rel="preload" as="image" href="img/curtain.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stage.css?v=3">
+</head>
+<body>
+<button class="lang" id="lang" type="button">PT</button>
+
+<!-- One painted frame for the whole site. Back to front: the backdrop, the
+     curtain, the gilded front, the props, the seats. -->
+<main class="house" id="house">
+  <div class="box">
+    <div class="opening">
+      <div class="scenes" id="scenes"></div>
+      <img class="curtain" src="img/curtain.webp" alt="">
+      <article class="fly paper board" id="board" aria-live="polite">
+        <h2 id="c-title"></h2>
+        <p class="meta" id="c-meta"></p>
+        <p class="text" id="c-text"></p>
+      </article>
+    </div>
+    <picture>
+      <source srcset="img/front-phone.webp" media="(max-aspect-ratio: 1/1)">
+      <img class="front" src="img/front.webp" alt="" width="1536" height="1024">
+    </picture>
+    <h1 class="cartouche">Stage</h1>
+
+    <!-- The props are the menu: two tassels change the performance, the
+         prompter's shell holds the programme, the messenger brings the contact card. -->
+    <div class="props" id="props">
+      <button class="prop pull l" id="prev" type="button"><img class="rest" src="img/tassel.webp" alt=""><span class="tag" id="prev-tag"></span></button>
+      <button class="prop pull r" id="next" type="button"><img class="rest" src="img/tassel.webp" alt=""><span class="tag" id="next-tag"></span></button>
+      <button class="prop shell" id="open-programme" type="button"><img class="rest" src="img/shell.webp" alt=""><img class="alt" src="img/shell-open.webp" alt=""><span class="tag" id="prog-tag"></span></button>
+      <button class="prop messenger" id="open-card" type="button"><img class="rest" src="img/messenger.webp" alt=""><img class="alt" src="img/messenger-letter.webp" alt=""><span class="tag" id="card-tag"></span></button>
+    </div>
+    <img class="seats" src="img/seats.webp" alt="">
+  </div>
+  <button class="raise" id="raise" type="button"></button>
+
+  <button class="veil" id="veil" type="button" tabindex="-1" aria-hidden="true"></button>
+  <section class="fly sheet prog" id="sheet" role="dialog" aria-modal="true" aria-labelledby="p-title" hidden>
+    <button class="away" type="button" data-away>✕</button>
+    <div class="in">
+      <h2 id="p-title"></h2>
+      <p class="sub" id="p-sub"></p>
+      <div id="groups"></div>
+    </div>
+  </section>
+  <section class="fly sheet card" id="card" role="dialog" aria-modal="true" aria-labelledby="t-title" hidden>
+    <button class="away" type="button" data-away>✕</button>
+    <h2 id="t-title"></h2>
+    <a class="mail" href="mailto:mail@ivolopes.com">mail@ivolopes.com</a>
+    <p id="t-text"></p>
+    <button class="copy" id="copy" type="button"></button>
+  </section>
+</main>
+
+<script src="content.js?v=2"></script>
+<script src="stage.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+/* Stage: a painted paper toy theatre. One fixed frame; everything happens on the stage. */
+:root {
+  --velvet: #2a0c0d; --paper: #f1e4c6; --ink: #3a2a1e; --ink-soft: #6b5240; --red: #8a2b22; --gold: #c49a4a; --gold-hi: #ecd29a;
+  --fell: "IM Fell English", "Iowan Old Style", Georgia, serif;
+  --fell-sc: "IM Fell English SC", "IM Fell English", Georgia, serif;
+  --body: "Cormorant Garamond", Georgia, serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; overflow: hidden; background: var(--velvet); color: var(--ink); font: 500 18px/1.45 var(--body); }
+h1, h2, h3, p { margin: 0; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px dashed var(--gold-hi); outline-offset: 4px; }
+
+.lang {
+  position: fixed; z-index: 30; top: calc(12px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  min-width: 44px; min-height: 44px; padding: 0 10px;
+  font: 400 15px var(--fell-sc); letter-spacing: .12em; color: var(--gold-hi);
+  background: rgba(42, 12, 13, .8); border: 1px solid rgba(196, 154, 74, .6); border-radius: 999px;
+}
+.lang:hover { color: #fff6dd; }
+
+/* The house never moves: one painted frame for the whole site */
+.house { position: fixed; inset: 0; overflow: clip; }
+.box {
+  --ox: 19.7%; --oy: 25.2%; --ow: 60.6%; --oh: 55%; --cy: 14.4%;
+  /* fill the screen; when too tall, rise just enough to show the cartouche, then crop the bottom (the seats hide it) */
+  position: absolute; left: 50%; top: 0; translate: -50% max(-8.5%, 100svh - 100%);
+  width: min(max(100vw, 100svh * 1.5), 100svh * 1.68); aspect-ratio: 1536 / 1024; container-type: size;
+}
+/* very wide screens: the theatre stops growing and its sides melt into the dark */
+@media (min-aspect-ratio: 168/100) { .box { mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); } }
+@media (max-aspect-ratio: 1/1) {
+  .box { --ox: 20.2%; --oy: 24.3%; --ow: 59.6%; --oh: 57.3%; --cy: 13.4%; aspect-ratio: 1024 / 1536; width: max(100vw, 100svh * .6667); top: 50%; translate: -50% -50%; }
+}
+.front { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.opening { position: absolute; left: var(--ox); top: var(--oy); width: var(--ow); height: var(--oh); overflow: clip; background: #2b2a33; container-type: size; }
+.scenes img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s; }
+.scenes img.on { opacity: 1; }
+.curtain { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; transition: transform 1.4s cubic-bezier(.55, 0, .2, 1); }
+.up .curtain { transform: translateY(-101%); }
+.cartouche { position: absolute; z-index: 6; left: 50%; top: var(--cy); translate: -50% -50%; font: 400 4.2cqw/1 var(--fell); letter-spacing: .02em; color: var(--ink); }
+@media (max-aspect-ratio: 1/1) { .cartouche { font-size: 7.4cqw; } }
+
+/* Paper: the one sheet every card is cut from */
+.paper { border-style: solid; border-color: transparent; border-width: var(--b, 26px);
+  border-image: url(img/card.webp) 190 fill / var(--b, 26px) stretch; }
+
+/* Anything that hangs is flown in from above on two cords */
+.fly { position: absolute; left: 50%; translate: -50% -150vh; transition: translate .9s cubic-bezier(.5, 0, .25, 1); }
+.fly::before, .fly::after { content: ""; position: absolute; bottom: calc(100% + var(--b, 0px) - 8px); width: 1.5px; height: 150vh;
+  background: linear-gradient(90deg, #5a3e22, #d9b56a, #5a3e22); }
+.fly::before { left: 22%; } .fly::after { right: 22%; }
+.fly.down { translate: -50% 0; transition-delay: var(--wait, 0s); }
+
+/* The title board for each performance */
+.board { z-index: 3; top: 5cqh; width: min(66cqw, 470px); text-align: center; --b: 30px; padding: 2px 10px 0; }
+.board h2 { font: 400 clamp(19px, 5cqw, 28px)/1.1 var(--fell); text-wrap: balance; }
+.meta { font: 400 13px var(--fell-sc); letter-spacing: .06em; color: var(--ink-soft); margin-top: 3px; text-wrap: balance; }
+.meta b { font-weight: 400; color: var(--red); }
+.meta:empty, .text:empty { display: none; }
+.text { font-size: clamp(14px, 3.2cqw, 17px); line-height: 1.3; margin-top: 4px; text-wrap: balance; }
+
+/* Props: cut-out pieces of the toy theatre that do things */
+.props { position: absolute; inset: 0; z-index: 7; pointer-events: none; opacity: 0; transition: opacity .8s .9s; }
+.up .props { opacity: 1; }
+.up:not(.reading) .props .prop { pointer-events: auto; }
+.prop { position: absolute; padding: 0; border: 0; background: none; -webkit-tap-highlight-color: transparent; }
+.prop img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 .3cqw .4cqw rgba(20, 6, 4, .45)); transition: filter .3s; }
+.prop:hover img, .prop:focus-visible img { filter: drop-shadow(0 0 1.2cqw rgba(255, 220, 150, .85)); }
+.prop .alt { position: absolute; inset: 0; opacity: 0; transition: opacity .25s; }
+.prop:hover .alt, .prop:focus-visible .alt, .prop.on .alt { opacity: 1; }
+.prop:hover .rest, .prop:focus-visible .rest, .prop.on .rest { opacity: 0; }
+.tag { position: absolute; left: 50%; translate: -50% 0; white-space: nowrap; padding: 5px 10px 4px; border-radius: 2px;
+  font: 400 14px/1 var(--fell-sc); letter-spacing: .08em; color: var(--ink); background: var(--paper);
+  box-shadow: inset 0 0 0 1px rgba(138, 43, 34, .5), 0 2px 6px rgba(0, 0, 0, .35); opacity: 0; transition: opacity .3s; pointer-events: none; }
+.prop:hover .tag, .prop:focus-visible .tag, .hint .tag { opacity: 1; }
+
+/* The two pulls: tassels hanging from the arch, prev on the left, next on the right */
+.pull { top: 27%; width: 3.6%; height: 32%; transform-origin: 50% 0; animation: sway 7s ease-in-out infinite; }
+.pull.l { left: 12.4%; } .pull.r { right: 12.4%; animation-delay: -3.5s; }
+.pull img { transition: translate .25s ease-in; }
+.pull.tug img { translate: 0 9%; }
+.pull { min-width: 44px; } /* a tassel is thin: keep it easy to hit */
+.pull .tag { top: 102%; }
+@keyframes sway { 50% { rotate: 1.4deg; } }
+/* The prompter's box: the programme lives inside the shell */
+.shell { left: 50%; translate: -50% 0; bottom: 11.5%; width: 9.5%; height: 15%; }
+.shell .tag { bottom: 104%; }
+/* The messenger: brings the contact card */
+.messenger { left: 66%; bottom: 21%; width: 6.5%; height: 22%; }
+.shell .alt { inset: auto 0 0; height: 121.9%; }
+.messenger .alt { width: 163%; right: auto; max-width: none; }
+.messenger .tag { bottom: 102%; }
+@media (max-aspect-ratio: 1/1) {
+  .pull { top: 25.5%; width: 6.6%; height: 24%; } .pull.l { left: 22%; } .pull.r { right: 22%; }
+  .pull.l .tag { left: 0; translate: 0 0; } .pull.r .tag { left: auto; right: 0; translate: 0 0; }
+  .shell { bottom: 10.6%; width: 15%; height: 12%; }
+  .messenger { left: 62%; bottom: 17.4%; width: 10%; height: 17.5%; }
+}
+.hint .prop:not(.pull) { animation: nudge 1.2s ease-in-out 2; }
+@keyframes nudge { 30% { margin-bottom: .8%; } 60% { margin-bottom: 0; } }
+
+/* Papers that come down in front of everything */
+.veil { position: absolute; inset: 0; z-index: 11; background: rgba(20, 8, 6, .5); opacity: 0; pointer-events: none; transition: opacity .5s; border: 0; padding: 0; cursor: default; }
+.reading .veil { opacity: 1; pointer-events: auto; }
+.away { position: absolute; z-index: 2; top: -14px; right: -14px; width: 44px; height: 44px; padding: 0; border: 0; background: none; display: grid; place-items: center; font: 400 18px/1 var(--fell); color: var(--ink); }
+.away::before { content: ""; position: absolute; inset: 5px; z-index: -1; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1px rgba(138, 43, 34, .6), inset 0 0 0 3px var(--paper), inset 0 0 0 4px rgba(138, 43, 34, .35), 0 2px 6px rgba(0, 0, 0, .4); }
+.away:hover { color: var(--red); }
+.sheet { z-index: 12; top: max(4svh, 52px); text-align: center; container-type: inline-size; }
+.sheet .in { height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(107, 82, 64, .5) transparent; }
+/* The programme: an open folded playbill on wide screens, one tall leaf on phones */
+.prog { width: min(94vw, 1080px, 84svh * 1.526); aspect-ratio: 1502 / 984; background: url(img/programme.webp) center / 100% 100% no-repeat; padding: 6.4% 7.4% 6%; }
+.prog .in { columns: 2; column-gap: 15%; text-align: left; }
+.prog .away { top: 1%; right: 1%; }
+@media (max-aspect-ratio: 1/1), (max-width: 700px) {
+  .prog { width: min(92vw, 520px); aspect-ratio: auto; height: auto; background: none; padding: 4px 8px 12px; --b: 34px; }
+  .prog .in { max-height: calc(min(84svh, 760px) - 84px); }
+  .prog { border-style: solid; border-color: transparent; border-width: var(--b); border-image: url(img/card.webp) 190 fill / var(--b) stretch; }
+  .prog .in { columns: 1; }
+  .prog .away { top: -30px; right: -30px; }
+}
+.prog h2 { font: 400 clamp(30px, 5cqw, 44px)/1 var(--fell); text-align: center; }
+.sub { font: 400 13px var(--fell-sc); letter-spacing: .18em; color: var(--ink-soft); margin-top: 4px; text-align: center; }
+.group { break-inside: avoid; margin-top: 16px; padding-top: 12px;
+  background: radial-gradient(circle, var(--ink-soft) 1.1px, transparent 1.5px) 50% 0 / 11px 4px repeat-x; }
+.group-head { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.group-head img { height: 46px; width: auto; }
+.group h3 { font: italic 400 24px var(--fell); }
+.rows { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.rows li { display: grid; grid-template-columns: 2.8em 1fr; column-gap: 8px; font-size: 16px; line-height: 1.3; }
+.rows .y { font: 400 15px var(--fell); color: var(--red); }
+.rows .w { font-style: italic; }
+.rows .p { grid-column: 2; font-size: 14px; color: var(--ink-soft); }
+.rows li.solo { grid-template-columns: 1fr; text-align: center; }  /* a row with no year, e.g. "To Be Announced" */
+.rows li.solo .p { grid-column: 1; }
+/* The contact card the messenger brings */
+.card { top: 50svh; margin-top: -24vh; width: min(92vw, 560px); aspect-ratio: 1385 / 809; background: url(img/card.webp) center / 100% 100% no-repeat;
+  display: grid; place-content: center; justify-items: center; gap: 2px; padding: 8% 10%; }
+.card.fly::before, .card.fly::after { bottom: calc(100% - 3%); }
+.card .away { top: -6px; right: -6px; }
+.card h2 { font: italic 400 clamp(26px, 8.4cqw, 42px)/1.1 var(--fell); }
+.mail { display: inline-block; padding: 6px 0 2px; font: 400 clamp(19px, 5.6cqw, 27px) var(--fell); color: var(--red); text-underline-offset: 3px; }
+.copy { min-height: 44px; padding: 0 12px; border: 0; background: none; font: 400 14px var(--fell-sc); letter-spacing: .08em; color: var(--ink-soft); text-decoration: underline dotted; text-underline-offset: 4px; }
+.copy:hover { color: var(--red); }
+.card p { font-size: clamp(15px, 3.8cqw, 18px); color: var(--ink-soft); text-wrap: balance; }
+
+/* Seats and the one button */
+.seats { position: absolute; z-index: 9; left: 50%; bottom: 0; translate: -50% 60%; width: 100%; max-width: none; pointer-events: none; }
+@media (max-aspect-ratio: 1/1) { .seats { width: 132%; translate: -50% 56%; } .board { width: 88cqw; } }
+.raise {
+  position: absolute; z-index: 10; left: 50%; translate: -50% 0; bottom: calc(max(4svh, 18px) + env(safe-area-inset-bottom, 0px));
+  white-space: nowrap; font: 400 19px/1 var(--fell); letter-spacing: .04em; color: var(--ink);
+  background: var(--paper); border: 1px solid rgba(138, 43, 34, .7); border-radius: 2px;
+  box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px rgba(138, 43, 34, .45), 0 3px 10px rgba(0, 0, 0, .5);
+  min-height: 48px; padding: 14px 26px 12px; transition: opacity .6s, background .2s;
+}
+.raise:hover { background: #f8eed6; }
+.up .raise { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
