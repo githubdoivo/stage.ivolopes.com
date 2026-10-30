@@ -1,6 +1,6 @@
 # stage.ivolopes.com
 
-[![CI](https://github.com/githubdoivo/stage/actions/workflows/ci.yml/badge.svg)](https://github.com/githubdoivo/stage/actions/workflows/ci.yml)
+[![CI](https://github.com/githubdoivo/stage.ivolopes.com/actions/workflows/ci.yml/badge.svg)](https://github.com/githubdoivo/stage.ivolopes.com/actions/workflows/ci.yml)
 
 **Stage**: dance and acting by Ivo Lopes, as a hand-painted paper toy theatre
 inspired by Theatro Circo in Braga. One fixed frame; everything happens on the
