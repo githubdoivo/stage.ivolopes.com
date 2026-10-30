@@ -110,7 +110,7 @@ test("Portuguese: from the browser, from ?lang=pt, and remembered after switchin
   const page = await ctx.newPage();
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "pt");
-  await expect(page.locator("#raise")).toHaveText("Subir o pano");
+  await expect(page.locator("#raise")).toHaveText("Subir o Pano");
   await page.locator("#lang").click();
   await expect(page.locator("#raise")).toHaveText("Raise the Curtain");
   await page.reload();
