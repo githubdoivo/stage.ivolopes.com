@@ -96,10 +96,12 @@
   // The programme and the card come down in front; ✕, Esc or a tap outside puts them away
   async function openPaper(id, from) {
     if (open || busy) return;
-    open = $(id); opener = from; from.classList.add("on");
-    open.hidden = false;
+    const el = $(id);
+    open = el; opener = from; from.classList.add("on");
+    el.hidden = false;
     house.classList.add("reading");
-    requestAnimationFrame(() => requestAnimationFrame(() => open.classList.add("down")));
+    // Only if it was not put away again in the meantime (a very quick second tap)
+    requestAnimationFrame(() => requestAnimationFrame(() => { if (open === el) el.classList.add("down"); }));
     await wait(900);
     if (open) open.querySelector("[data-away]").focus({ preventScroll: true });
   }
