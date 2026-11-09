@@ -7,7 +7,13 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+html { background: var(--velvet); }
+/* Same phone frame as ivolopes.com: iPhone Safari paints a solid band over anything pinned to the
+   screen edges, so nothing is fixed. The house reaches 160px above the screen (the window is kept
+   scrolled there by frame.js, so the clock sits on velvet) and past the bottom bar on phones. */
+:root { --above: 160px; --below: 0px; }
+@media (pointer: coarse) { :root { --below: 120px; } }
 body { margin: 0; overflow: hidden; background: var(--velvet); color: var(--ink); font: 500 18px/1.45 var(--body); }
 h1, h2, h3, p { margin: 0; }
 img { display: block; max-width: 100%; }
@@ -16,7 +22,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px dashed var(--gold-hi); outline-offset: 4px; }
 
 .lang {
-  position: fixed; z-index: 30; top: calc(12px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  position: absolute; z-index: 30; top: calc(var(--above) + 12px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
   min-width: 44px; min-height: 44px; padding: 0 10px;
   font: 400 15px var(--fell-sc); letter-spacing: .12em; color: var(--gold-hi);
   background: rgba(42, 12, 13, .8); border: 1px solid rgba(196, 154, 74, .6); border-radius: 999px;
@@ -24,17 +30,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lang:hover { color: #fff6dd; }
 
 /* The house never moves: one painted frame for the whole site */
-.house { position: fixed; inset: 0; overflow: clip; }
+.house { position: absolute; top: 0; left: 0; right: 0; height: calc(100vh + var(--above) + var(--below)); height: calc(100lvh + var(--above) + var(--below)); overflow: clip; background: var(--velvet); }
 .box {
   --ox: 19.7%; --oy: 25.2%; --ow: 60.6%; --oh: 55%; --cy: 14.4%;
   /* fill the screen; when too tall, rise just enough to show the cartouche, then crop the bottom (the seats hide it) */
-  position: absolute; left: 50%; top: 0; translate: -50% max(-8.5%, 100svh - 100%);
+  position: absolute; left: 50%; top: var(--above); translate: -50% max(-8.5%, 100svh - 100%);
   width: min(max(100vw, 100svh * 1.5), 100svh * 1.68); aspect-ratio: 1536 / 1024; container-type: size;
 }
 /* very wide screens: the theatre stops growing and its sides melt into the dark */
 @media (min-aspect-ratio: 168/100) { .box { mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); } }
 @media (max-aspect-ratio: 1/1) {
-  .box { --ox: 20.2%; --oy: 24.3%; --ow: 59.6%; --oh: 57.3%; --cy: 13.4%; aspect-ratio: 1024 / 1536; width: max(100vw, 100svh * .6667); top: 50%; translate: -50% -50%; }
+  .box { --ox: 20.2%; --oy: 24.3%; --ow: 59.6%; --oh: 57.3%; --cy: 13.4%; aspect-ratio: 1024 / 1536; width: max(100vw, 100svh * .6667); top: calc(var(--above) + 50svh); translate: -50% -50%; }
 }
 .front { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
 .opening { position: absolute; left: var(--ox); top: var(--oy); width: var(--ow); height: var(--oh); overflow: clip; background: #2b2a33; container-type: size; }
@@ -110,7 +116,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .away { position: absolute; z-index: 2; top: -14px; right: -14px; width: 44px; height: 44px; padding: 0; border: 0; background: none; display: grid; place-items: center; font: 400 18px/1 var(--fell); color: var(--ink); }
 .away::before { content: ""; position: absolute; inset: 5px; z-index: -1; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1px rgba(138, 43, 34, .6), inset 0 0 0 3px var(--paper), inset 0 0 0 4px rgba(138, 43, 34, .35), 0 2px 6px rgba(0, 0, 0, .4); }
 .away:hover { color: var(--red); }
-.sheet { z-index: 12; top: max(4svh, 52px); text-align: center; container-type: inline-size; }
+.sheet { z-index: 12; top: calc(var(--above) + max(4svh, 52px)); text-align: center; container-type: inline-size; }
 .sheet .in { height: 100%; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(107, 82, 64, .5) transparent; }
 /* The programme: an open folded playbill on wide screens, one tall leaf on phones */
 .prog { width: min(94vw, 1080px, 84svh * 1.526); aspect-ratio: 1502 / 984; background: url(img/programme.webp) center / 100% 100% no-repeat; padding: 6.4% 7.4% 6%; }
@@ -138,7 +144,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .rows li.solo { grid-template-columns: 1fr; text-align: center; }  /* a row with no year, e.g. "To Be Announced" */
 .rows li.solo .p { grid-column: 1; }
 /* The contact card the messenger brings */
-.card { top: 50svh; margin-top: -24vh; width: min(92vw, 560px); aspect-ratio: 1385 / 809; background: url(img/card.webp) center / 100% 100% no-repeat;
+.card { top: calc(var(--above) + 50svh); margin-top: -24vh; width: min(92vw, 560px); aspect-ratio: 1385 / 809; background: url(img/card.webp) center / 100% 100% no-repeat;
   display: grid; place-content: center; justify-items: center; gap: 2px; padding: 8% 10%; }
 .card.fly::before, .card.fly::after { bottom: calc(100% - 3%); }
 .card .away { top: -6px; right: -6px; }
@@ -152,7 +158,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .seats { position: absolute; z-index: 9; left: 50%; bottom: 0; translate: -50% 60%; width: 100%; max-width: none; pointer-events: none; }
 @media (max-aspect-ratio: 1/1) { .seats { width: 132%; translate: -50% 56%; } .board { width: 88cqw; } }
 .raise {
-  position: absolute; z-index: 10; left: 50%; translate: -50% 0; bottom: calc(max(4svh, 18px) + env(safe-area-inset-bottom, 0px));
+  position: absolute; z-index: 10; left: 50%; translate: -50% 0; bottom: calc(var(--below) + 100lvh - 100svh + max(4svh, 18px) + env(safe-area-inset-bottom, 0px));
   white-space: nowrap; font: 400 19px/1 var(--fell); letter-spacing: .04em; color: var(--ink);
   background: var(--paper); border: 1px solid rgba(138, 43, 34, .7); border-radius: 2px;
   box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px rgba(138, 43, 34, .45), 0 3px 10px rgba(0, 0, 0, .5);

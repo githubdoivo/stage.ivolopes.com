@@ -204,3 +204,18 @@ test("no serious accessibility problems, before and after the curtain rises", as
   await page.waitForTimeout(1000);
   await check("programme open");
 });
+
+test("phone frame: nothing pinned, the window rests 160px down, the house reaches past both edges", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForFunction(() => Math.abs(window.scrollY - 160) < 1);
+  const r = await page.evaluate(() => {
+    const pinned = [...document.querySelectorAll("body *")].filter((e) => ["fixed", "sticky"].includes(getComputedStyle(e).position)).map((e) => e.className || e.tagName);
+    const h = document.getElementById("house").getBoundingClientRect(), lang = document.querySelector(".lang").getBoundingClientRect();
+    return { pinned, top: h.top, bottom: h.bottom, vh: innerHeight, langTop: lang.top };
+  });
+  expect(r.pinned).toEqual([]);
+  expect(r.top).toBeLessThanOrEqual(-159);
+  expect(r.bottom).toBeGreaterThanOrEqual(r.vh);
+  expect(r.langTop).toBeGreaterThan(0);
+  expect(r.langTop).toBeLessThan(80);
+});
